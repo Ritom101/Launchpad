@@ -18,28 +18,31 @@ jobs:
       contents: read
 
     steps:
+      # 1️⃣ Checkout the code
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Configure AWS credentials via OIDC
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::459532804090:role/launchpad-github-actions
           aws-region: ${{ env.AWS_REGION }}
 
+      # 3️⃣ Login to Amazon ECR
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
+      # 4️⃣ Build Docker image
       - name: Build Docker image
         run: |
-          docker build \
-            -t $ECR_REPOSITORY:${{ github.sha }} \
-            ./app
+          docker build -t $ECR_REPOSITORY:${{ github.sha }} ./app
 
+      # 5️⃣ Tag and push Docker image
       - name: Tag and Push image
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}  # <-- GitHub secret
         run: |
           docker tag $ECR_REPOSITORY:${{ github.sha }} \
-            <ACCOUNT_ID>.dkr.ecr.${AWS_REGION}.amazonaws.com/$ECR_REPOSITORY:${{ github.sha }}
-
-          docker push \
-            <ACCOUNT_ID>.dkr.ecr.${AWS_REGION}.amazonaws.com/$ECR_REPOSITORY:${{ github.sha }}
+            $AWS_ACCOUNT_ID.dkr.ecr.${AWS_REGION}.amazonaws.com/$ECR_REPOSITORY:${{ github.sha }}
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.${AWS_REGION}.amazonaws.com/$ECR_REPOSITORY:${{ github.sha }}
