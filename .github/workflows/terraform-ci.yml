@@ -1,0 +1,49 @@
+name: Terraform CI
+
+on:
+  pull_request:
+    paths:
+      - "terraform/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "terraform/**"
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::459532804090:role/launchpad-github-actions
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: terraform/envs/dev
+        run: terraform init
+
+      - name: Terraform Plan (PR only)
+        if: github.event_name == 'pull_request'
+        working-directory: terraform/envs/dev
+        run: terraform plan
+
+      - name: Terraform Apply (main only)
+        if: github.ref == 'refs/heads/main'
+        working-directory: terraform/envs/dev
+        run: terraform apply -auto-approve
