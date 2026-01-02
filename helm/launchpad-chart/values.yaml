@@ -1,0 +1,22 @@
+replicaCount: 1
+
+image:
+  repository: 459532804090.dkr.ecr.us-east-1.amazonaws.com/launchpad-dev
+  tag: run
+  pullPolicy: IfNotPresent
+
+service:
+  clusterIP:
+    port: 5000
+  loadBalancer:
+    port: 80
+
+resources:
+  requests:
+    cpu: "25m"
+    memory: "64Mi"
+  limits:
+    cpu: "100m"
+    memory: "128Mi"
+
+namespace: launchpad-dev

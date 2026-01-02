@@ -25,18 +25,22 @@ module "eks" {
   count  = var.enable_eks ? 1 : 0
   source = "../../modules/eks"
 
-  project         = var.project
-  environment     = var.environment
-  vpc_id          = module.vpc.vpc_id
-  private_subnets = module.vpc.private_subnets
+  project            = var.project
+  environment        = var.environment
+  vpc_id             = module.vpc.vpc_id
+  private_subnets    = module.vpc.private_subnets
+  node_instance_type = "t3.micro"
+  desired_capacity   = 2
+  min_size           = 2
+  max_size           = 3
 }
 
 module "alb" {
   count  = var.enable_alb ? 1 : 0
   source = "../../modules/alb"
 
-  project = var.project
+  project     = var.project
   environment = var.environment
-  vpc_id  = module.vpc.vpc_id
-  subnets = module.vpc.public_subnets
+  vpc_id      = module.vpc.vpc_id
+  subnets     = module.vpc.public_subnets
 }
