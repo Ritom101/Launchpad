@@ -1,0 +1,7 @@
+# D:\Launchpad\helm\launchpad-chart\Chart.yaml
+apiVersion: v2
+name: launchpad                 # <-- THIS is required
+description: LaunchPad Flask app
+type: application
+version: 0.1.0
+appVersion: "1.0"

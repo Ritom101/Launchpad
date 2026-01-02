@@ -6,3 +6,16 @@
 *.backup
 *.log
 backup.bundle
+
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+terraform-state-backup.json
+*.tfvars
+
+# Helm
+charts/
+
+# Secrets
+*.env
