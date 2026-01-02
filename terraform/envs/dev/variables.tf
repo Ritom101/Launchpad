@@ -16,7 +16,7 @@ variable "project" {
 variable "enable_eks" {
   description = "Enable EKS cluster (costly, disabled by default)"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "enable_alb" {
